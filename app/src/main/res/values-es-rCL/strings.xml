@@ -3,4 +3,6 @@
     <string name="app_name">EvaDos</string>
     <string name="button_add_text">Crear</string>
     <string name="edit_text_name">Producto</string>
+    <string name="text_no_items">No hay productos que mostrar</string>
+    <string name="content_description_add_button">agregar</string>
 </resources>
