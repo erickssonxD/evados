@@ -15,7 +15,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import com.example.evados.data.Item
@@ -62,7 +61,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainActivityContent(items: List<Item>, modifier: Modifier = Modifier) {
     if (items.isEmpty()) {
-        Text("No items")
+        ItemFormUI(modifier = modifier)
     } else {
         LazyColumn(modifier = modifier) {
             items(items.size) { index ->
@@ -74,7 +73,28 @@ fun MainActivityContent(items: List<Item>, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun MainActivityContentFilled() {
+    EvaDosTheme {
+        MainActivityContent(
+            items = listOf(
+                Item(name = "Item 1"),
+                Item(name = "Item 2"),
+                Item(name = "Item 3"),
+                Item(name = "Item 4"),
+                Item(name = "Item 5"),
+                Item(name = "Item 6"),
+                Item(name = "Item 7"),
+                Item(name = "Item 8"),
+                Item(name = "Item 9"),
+                Item(name = "Item 10"),
+            )
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainActivityContentEmpty() {
     EvaDosTheme {
         MainActivityContent(emptyList())
     }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EvaDos</string>
+    <string name="button_add_text">Crear</string>
+    <string name="edit_text_name">Producto</string>
+</resources>
