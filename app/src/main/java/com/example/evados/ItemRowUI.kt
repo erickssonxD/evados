@@ -23,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun ItemRowUI(item: Item) {
+fun ItemRowUI(item: Item, onDeleteItemButtonClick: () -> Unit, onUpdateItemButtonClick: () -> Unit) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -41,6 +41,7 @@ fun ItemRowUI(item: Item) {
                 IconButton(onClick = {
                     coroutineScope.launch(Dispatchers.IO) {
                         ListDB.getInstance(context).itemDao().update(item.copy(bought = !item.bought))
+                        onUpdateItemButtonClick()
                     }
                 }) {
                     Image(
@@ -53,6 +54,7 @@ fun ItemRowUI(item: Item) {
                 IconButton(onClick = {
                     coroutineScope.launch(Dispatchers.IO) {
                         ListDB.getInstance(context).itemDao().update(item.copy(bought = !item.bought))
+                        onUpdateItemButtonClick()
                     }
                 }) {
                     Image(
@@ -72,6 +74,7 @@ fun ItemRowUI(item: Item) {
             onClick = {
                 coroutineScope.launch(Dispatchers.IO) {
                     ListDB.getInstance(context).itemDao().delete(item)
+                    onDeleteItemButtonClick()
                 }
             },
         ) {
@@ -86,5 +89,5 @@ fun ItemRowUI(item: Item) {
 @Preview(showBackground = true)
 @Composable
 fun ItemRowUIExample() {
-    ItemRowUI(Item(name = "Item 1"))
+    ItemRowUI(Item(name = "Item 1"), onDeleteItemButtonClick = {}, onUpdateItemButtonClick = {})
 }

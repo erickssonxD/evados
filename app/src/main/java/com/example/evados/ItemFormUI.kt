@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -59,7 +60,9 @@ fun ItemFormUI(onItemAddButtonClick: () -> Unit) {
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = {
             coroutineScope.launch(Dispatchers.IO) {
-                ListDB.getInstance(context).itemDao().insert(Item(name = name))
+                val dao = ListDB.getInstance(context).itemDao()
+                val item = Item(name = name)
+                dao.insert(item)
                 onItemAddButtonClick()
             }
         }) {

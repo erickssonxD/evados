@@ -6,5 +6,6 @@
     <string name="text_no_items">No hay productos que mostrar</string>
     <string name="content_description_add_button">agregar</string>
     <string name="image_description_item_image">Imagen Carrito</string>
-    <string name="image_description_delete_item">Eliminat item</string>
+    <string name="image_description_delete_item">Eliminar item</string>
+    <string name="item_added">Item agregado</string>
 </resources>
