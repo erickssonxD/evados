@@ -50,6 +50,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             var items: List<Item> by remember { mutableStateOf(emptyList()) }
+            val (action, setAction) = remember { mutableStateOf(Action.LIST) }
 
             LaunchedEffect(Unit) {
                 withContext(dbDispatcher) {
@@ -57,25 +58,45 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
+            val onAddItem: (Item) -> Unit = { item ->
+                lifecycleScope.launch(dbDispatcher) {
+                    itemDao.insert(item)
+                    items = itemDao.getAll()
+                }
+                setAction(Action.LIST)
+            }
+
             EvaDosTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainActivityContent(items)
+                    when(action) {
+                        Action.LIST -> ItemsListUI(
+                            items,
+                            onAddItem = { setAction(Action.CREATE) }
+                        )
+                        Action.CREATE -> ItemFormUI(onAddItem)
+                    }
                 }
             }
         }
     }
 }
 
+enum class Action {
+    CREATE,
+    LIST,
+    DELETE
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainActivityContent(items: List<Item>, modifier: Modifier = Modifier) {
+fun ItemsListUI(items: List<Item>, onAddItem: () -> Unit = {}, modifier: Modifier = Modifier) {
     Scaffold(
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { /*TODO*/ },
+                onClick = { onAddItem() },
                 icon = {
                     Icon(
                         Icons.Filled.Add,
@@ -111,7 +132,7 @@ fun MainActivityContent(items: List<Item>, modifier: Modifier = Modifier) {
 @Composable
 fun MainActivityContentFilled() {
     EvaDosTheme {
-        MainActivityContent(
+        ItemsListUI(
             items = listOf(
                 Item(name = "Item 1"),
                 Item(name = "Item 2"),
@@ -132,6 +153,6 @@ fun MainActivityContentFilled() {
 @Composable
 fun MainActivityContentEmpty() {
     EvaDosTheme {
-        MainActivityContent(emptyList())
+        ItemsListUI(emptyList())
     }
 }
