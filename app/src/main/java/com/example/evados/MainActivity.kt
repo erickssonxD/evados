@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,14 +59,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            val onAddItem: (Item) -> Unit = { item ->
-                lifecycleScope.launch(dbDispatcher) {
-                    itemDao.insert(item)
-                    items = itemDao.getAll()
-                }
-                setAction(Action.LIST)
-            }
-
             EvaDosTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -74,9 +67,11 @@ class MainActivity : ComponentActivity() {
                     when(action) {
                         Action.LIST -> ItemsListUI(
                             items,
-                            onAddItem = { setAction(Action.CREATE) }
+                            onAddItemButtonClick = { setAction(Action.CREATE) }
                         )
-                        Action.CREATE -> ItemFormUI(onAddItem)
+                        Action.CREATE -> ItemFormUI(
+                            onItemAddButtonClick = { setAction(Action.LIST) }
+                        )
                     }
                 }
             }
@@ -87,16 +82,19 @@ class MainActivity : ComponentActivity() {
 enum class Action {
     CREATE,
     LIST,
-    DELETE
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItemsListUI(items: List<Item>, onAddItem: () -> Unit = {}, modifier: Modifier = Modifier) {
+fun ItemsListUI(
+    itemList: List<Item>,
+    onAddItemButtonClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { onAddItem() },
+                onClick = { onAddItemButtonClick() },
                 icon = {
                     Icon(
                         Icons.Filled.Add,
@@ -107,8 +105,7 @@ fun ItemsListUI(items: List<Item>, onAddItem: () -> Unit = {}, modifier: Modifie
             )
         }
     ) { contentPadding ->
-        if (items.isEmpty()) {
-            // ItemFormUI(modifier = modifier)
+        if (itemList.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -119,8 +116,8 @@ fun ItemsListUI(items: List<Item>, onAddItem: () -> Unit = {}, modifier: Modifie
             }
         } else {
             LazyColumn(modifier = modifier) {
-                items(items.size) { index ->
-                    Text(items[index].name)
+                items(itemList) { item ->
+                    ItemRowUI(item)
                 }
             }
         }
@@ -133,7 +130,7 @@ fun ItemsListUI(items: List<Item>, onAddItem: () -> Unit = {}, modifier: Modifie
 fun MainActivityContentFilled() {
     EvaDosTheme {
         ItemsListUI(
-            items = listOf(
+            itemList = listOf(
                 Item(name = "Item 1"),
                 Item(name = "Item 2"),
                 Item(name = "Item 3"),
@@ -144,7 +141,8 @@ fun MainActivityContentFilled() {
                 Item(name = "Item 8"),
                 Item(name = "Item 9"),
                 Item(name = "Item 10"),
-            )
+            ),
+            onAddItemButtonClick = {}
         )
     }
 }
@@ -153,6 +151,6 @@ fun MainActivityContentFilled() {
 @Composable
 fun MainActivityContentEmpty() {
     EvaDosTheme {
-        ItemsListUI(emptyList())
+        ItemsListUI(emptyList(), onAddItemButtonClick = {})
     }
 }

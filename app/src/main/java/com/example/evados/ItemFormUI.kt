@@ -15,18 +15,26 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.evados.data.Item
+import com.example.evados.data.ListDB
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItemFormUI(onAddItem: (Item) -> Unit = {}, modifier: Modifier = Modifier) {
+fun ItemFormUI(onItemAddButtonClick: () -> Unit) {
     val (name, setName) = remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -49,7 +57,12 @@ fun ItemFormUI(onAddItem: (Item) -> Unit = {}, modifier: Modifier = Modifier) {
             label = { Text(stringResource(R.string.edit_text_name)) }
         )
         Spacer(modifier = Modifier.height(24.dp))
-        Button(onClick = { onAddItem(Item(name = name)) }) {
+        Button(onClick = {
+            coroutineScope.launch(Dispatchers.IO) {
+                ListDB.getInstance(context).itemDao().insert(Item(name = name))
+                onItemAddButtonClick()
+            }
+        }) {
             Text(stringResource(R.string.button_add_text))
         }
     }
@@ -57,6 +70,6 @@ fun ItemFormUI(onAddItem: (Item) -> Unit = {}, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun ItemRowUIExample() {
-    ItemFormUI(onAddItem = {})
+fun ItemFormUIExample() {
+    ItemFormUI(onItemAddButtonClick = {})
 }
