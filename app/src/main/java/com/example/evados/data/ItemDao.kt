@@ -3,14 +3,13 @@ package com.example.evados.data
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Update
 
 @Dao
 interface ItemDao {
-    @Query("SELECT * FROM Item")
-    fun getAll(): List<Item>
+    @Query("SELECT * FROM Item ORDER BY bought ASC")
+    fun getAllSortedByBought(): List<Item>
 
     @Insert
     fun insert(item: Item): Long

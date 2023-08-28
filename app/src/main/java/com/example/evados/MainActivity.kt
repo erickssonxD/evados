@@ -43,7 +43,7 @@ fun MainActivityUI() {
     LaunchedEffect(items) {
         withContext(Dispatchers.IO) {
             val db = ListDB.getInstance(ctx)
-            setItems( db.itemDao().getAll() )
+            setItems( db.itemDao().getAllSortedByBought() )
         }
     }
 
